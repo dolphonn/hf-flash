@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ATPL · Human Factors — Flashcards</title>
+<style>
+:root{
+  --accent:#4f46e5; --accent2:#0ea5e9;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif;}
+body{color:var(--text);transition:background .4s ease,color .3s ease;}
+body.light{
+  --bg1:#dbeafe;--bg2:#ede9fe;--bg3:#fce7f3;
+  --text:#0b1220;--muted:#5b6472;
+  --glass:rgba(255,255,255,.55);--glass2:rgba(255,255,255,.72);
+  --brd:rgba(255,255,255,.7);--shadow:0 18px 40px rgba(30,27,75,.16);
+  --blobA:rgba(99,102,241,.5);--blobB:rgba(14,165,233,.45);--blobC:rgba(236,72,153,.35);
+}
+body.dark{
+  --bg1:#0a0f1f;--bg2:#0e1730;--bg3:#1b1740;
+  --text:#e8ecf6;--muted:#9aa4bb;
+  --glass:rgba(255,255,255,.07);--glass2:rgba(255,255,255,.10);
+  --brd:rgba(255,255,255,.16);--shadow:0 18px 44px rgba(0,0,0,.5);
+  --blobA:rgba(99,102,241,.35);--blobB:rgba(56,189,248,.28);--blobC:rgba(217,70,239,.22);
+}
+.bg{position:fixed;inset:0;z-index:0;background:linear-gradient(160deg,var(--bg1),var(--bg2) 48%,var(--bg3));overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.9;will-change:transform;}
+.b1{width:60vmax;height:60vmax;background:var(--blobA);top:-20vmax;left:-18vmax;animation:float1 18s ease-in-out infinite;}
+.b2{width:55vmax;height:55vmax;background:var(--blobB);bottom:-22vmax;right:-16vmax;animation:float2 22s ease-in-out infinite;}
+.b3{width:40vmax;height:40vmax;background:var(--blobC);top:40%;left:55%;animation:float3 26s ease-in-out infinite;}
+@keyframes float1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(8vmax,6vmax) scale(1.1)}}
+@keyframes float2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-7vmax,-5vmax) scale(1.08)}}
+@keyframes float3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-5vmax,4vmax) scale(.92)}}
+.screen{position:fixed;inset:0;z-index:1;display:flex;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);}
+.hidden{display:none !important;}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px 8px;}
+h1{font-size:22px;font-weight:800;margin:0;letter-spacing:-.4px;}
+.sub{font-size:12px;color:var(--muted);margin-top:3px;font-weight:600;}
+.icon-btn{flex:none;width:42px;height:42px;border-radius:14px;border:1px solid var(--brd);background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:var(--text);font-size:19px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);transition:transform .15s ease;}
+.icon-btn:active{transform:scale(.92);}
+.list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:8px 16px 24px;}
+.sect{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:700;margin:16px 6px 8px;}
+.row{display:flex;align-items:center;gap:14px;padding:15px 16px;border-radius:18px;background:var(--glass);backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);border:1px solid var(--brd);box-shadow:var(--shadow);margin-bottom:12px;cursor:pointer;transition:transform .15s ease,border-color .2s;}
+.row:active{transform:scale(.98);}
+.badge{flex:none;width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 8px 18px rgba(79,70,229,.4);}
+.row .info{flex:1;min-width:0;}
+.row .t{font-weight:700;font-size:15.5px;line-height:1.25;}
+.row .c{font-size:12px;color:var(--muted);margin-top:3px;}
+.chev{flex:none;color:var(--muted);font-size:18px;opacity:.7;}
+footer{padding:10px 20px calc(14px + env(safe-area-inset-bottom));font-size:11px;color:var(--muted);text-align:center;line-height:1.5;}
+.topbar{display:flex;align-items:center;gap:12px;padding:16px 16px 6px;}
+.titlewrap{flex:1;min-width:0;text-align:center;}
+#topicTitle{font-weight:800;font-size:15px;display:block;line-height:1.2;}
+#counter{font-size:12px;color:var(--muted);font-weight:600;}
+.progress{height:5px;border-radius:99px;background:var(--glass);margin:8px 18px 4px;overflow:hidden;}
+#progressBar{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s ease;}
+.stage{flex:1;display:flex;align-items:center;justify-content:center;padding:14px 18px;perspective:1400px;touch-action:none;user-select:none;-webkit-user-select:none;}
+.card{width:100%;max-width:520px;height:min(70vh,640px);position:relative;transform-style:preserve-3d;will-change:transform;}
+.card-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.2,.8,.2,1);}
+.card.flipped .card-inner{transform:rotateY(180deg);}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:26px;padding:26px 24px;display:flex;flex-direction:column;background:var(--glass2);backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%);border:1px solid var(--brd);box-shadow:var(--shadow);}
+.face.back{transform:rotateY(180deg);}
+.ref{align-self:flex-start;font-size:11.5px;font-weight:700;letter-spacing:.03em;color:#fff;padding:6px 12px;border-radius:99px;background:linear-gradient(135deg,var(--accent),var(--accent2));margin-bottom:16px;}
+.q{font-size:20px;font-weight:700;line-height:1.4;flex:1;display:flex;align-items:center;}
+.a{font-size:16px;line-height:1.55;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-right:4px;}
+.hint{margin-top:14px;text-align:center;font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.04em;}
+.swipe-hint{text-align:center;color:var(--muted);font-size:12px;padding-bottom:calc(8px + env(safe-area-inset-bottom));}
+</style>
+</head>
+<body class="dark">
+<div class="bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<section id="landing" class="screen">
+  <header>
+    <div>
+      <h1>ATPL · Human Factors</h1>
+      <p class="sub">CAA of NZ AC61-7 Rev 26 · Subject 46</p>
+    </div>
+    <button id="themeBtn" class="icon-btn" aria-label="Toggle theme">&#9789;</button>
+  </header>
+  <div id="topicList" class="list"></div>
+  <footer>Sources: CAA of NZ AC61-7 Rev 26 · CAA MIS 014 (Alcohol) · aviation.govt.nz · Waypoints · NZ ATPL practice exams</footer>
+</section>
+
+<section id="cards" class="screen hidden">
+  <div class="topbar">
+    <button id="backBtn" class="icon-btn" aria-label="Back">&#8592;</button>
+    <div class="titlewrap"><span id="topicTitle"></span><span id="counter"></span></div>
+    <button id="themeBtn2" class="icon-btn" aria-label="Toggle theme">&#9789;</button>
+  </div>
+  <div class="progress"><div id="progressBar"></div></div>
+  <div id="stage" class="stage">
+    <div id="card" class="card">
+      <div class="card-inner" id="cardInner">
+        <div class="face front">
+          <span class="ref" id="frontRef"></span>
+          <p class="q" id="frontQ"></p>
+          <span class="hint">tap to reveal answer</span>
+        </div>
+        <div class="face back">
+          <span class="ref" id="backRef"></span>
+          <p class="a" id="backA"></p>
+          <span class="hint">swipe up for next &middot; down for previous</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="swipe-hint">&#8593; next &nbsp;&middot;&nbsp; &#8595; back</div>
+</section>
+
+<script>
+var DATA=[];
+DATA.push(
+{r:"46.2",t:"Airmanship, professionalism and responsibility",s:"Human Factors – General",cards:[
+ {r:"46.2.2",q:"Explain the term 'professional' as it applies to a pilot.",a:"A professional is someone who has mastered their craft, meets high technical standards, and — critically — acts in accordance with a code of ethics that puts safety above personal gain or convenience. For pilots this means integrity, accountability, honesty and humility: admitting error, reporting hazards, and never cutting corners for self-interest."},
+ {r:"46.2.4",q:"Explain the term 'airman' as it applies to a pilot.",a:"An airman is not just technically competent but has the character of a professional: sound judgement, good decision-making, humility, integrity and accountability. The ATPL standard expects the higher moral and ethical standards of an airman, not merely the skills of a technician."},
+ {r:"46.2.6",q:"List some characteristics of professionalism.",a:"Technical mastery; a strong sense of safety and responsibility; a personal code of ethics (integrity, honesty, accountability); humility and willingness to admit error; continuous learning; treating passengers, crew and the environment with care; and putting public safety ahead of self-interest."},
+ {r:"46.2.8",q:"List some characteristics of an airman.",a:"Good judgement and decision-making; humility (knowing their limits); integrity and accountability; sound ethical standards; effective communication and teamwork; calm under pressure; and a commitment to safety that overrides convenience or ego."},
+ {r:"46.2.10",q:"Explain the responsibilities of an airman.",a:"To ensure the safety of passengers, crew and the aircraft; to act as commander with final authority over the flight; to report hazards, errors and unsafe acts; to maintain competence through training; to comply with regulations and company policy; and to model the professional behaviour expected of others on board."},
+ {r:"46.2.12",q:"Explain what is meant by ethics.",a:"Ethics are the moral principles that guide right and wrong behaviour. In aviation they cover honesty, integrity, accountability, fairness and respect — the standards a pilot uses to make decisions when no one is watching and when personal convenience conflicts with safety."},
+ {r:"46.2.14",q:"Explain what is meant by integrity.",a:"Integrity is doing the right thing even when no one is checking — honesty, consistency between words and actions, and refusal to cut corners or hide errors. It is a core element of professionalism: an airman reports their own mistakes and unsafe conditions rather than concealing them."},
+ {r:"46.2.16",q:"Explain the concept of accountability.",a:"Accountability means accepting ownership for one's actions, decisions and omissions — including their consequences. A pilot is accountable to passengers, crew, the organisation and the public. It involves being answerable, reporting errors honestly, and taking corrective action rather than blaming others."}
+]},
+{r:"46.4",t:"Human factors and safety",s:"Human Factors – General",cards:[
+ {r:"46.4.2",q:"Explain what is meant by human performance limitation.",a:"Human performance limits are the boundaries of what a person can physically, mentally or sensorily achieve in a given task. Because these limits are fixed (reaction time, memory span, vigilance duration, stress tolerance), the system must be designed to work within them — and when they cannot be removed, errors must be prevented or their consequences mitigated."},
+ {r:"46.4.4",q:"Explain what is meant by an error.",a:"An error is a human performance failure that violates a rule of correct performance — the person does something they should not do, or fails to do something they should (an action or inaction). It is the final act in a chain of events and is generally considered unavoidable; the goal is to design systems where errors are caught before they become accidents."},
+ {r:"46.4.6",q:"Explain what is meant by a human performance failure.",a:"A human performance failure is when a person does not perform as expected or required, producing an error or deviation from correct performance. It can result from skill-based slips, rule-based mistakes, memory lapses, or knowledge gaps — and is best managed by understanding the causes (design, training, fatigue) rather than blaming the individual."},
+ {r:"46.4.8",q:"Explain what is meant by a deviation.",a:"A deviation is any departure from established procedures, regulations or correct performance — e.g. not following a checklist, an SOP, or ATC instruction. Deviations are often the visible sign of an error and must be reported so the underlying cause (training, design, workload) can be addressed."},
+ {r:"46.4.10",q:"Explain what is meant by human error.",a:"Human error is a broad term for any act or omission where a person fails to perform correctly — covering slips, lapses, mistakes and violations. It is considered an inevitable part of working in complex systems; safety comes from understanding why errors occur and designing controls (checklists, redundancies, monitoring) that catch them."},
+ {r:"46.4.12",q:"Explain what is meant by a human performance problem.",a:"A human performance problem is a situation where the interaction between people and the system leads to unsafe or inefficient outcomes — e.g. poor interface design, excessive workload, inadequate training or fatigue. It points to a design or management issue that should be fixed at the system level rather than treated as individual fault."},
+ {r:"46.4.14",q:"Explain what is meant by the human factors approach.",a:"The human factors approach designs systems around how people actually think, perceive and act — matching the machine to the human rather than forcing the human to adapt to the machine. It uses knowledge of human performance limits and error to create safe, efficient, usable systems."},
+ {r:"46.4.16",q:"Explain what is meant by a human centred design approach.",a:"Human-centred design (HCD) places the user at the centre of the design process: understanding their needs, involving them in design and testing, and iterating based on feedback. The aim is systems that are safe, usable and effective for real people in real operating conditions."},
+ {r:"46.4.18",q:"Explain what is meant by a human centred organisation.",a:"A human-centred organisation values its people, trusts them to report problems honestly, and builds a safety culture where learning from errors is encouraged rather than punished. It invests in training, realistic workloads and feedback loops so that human performance is supported, not just monitored."},
+ {r:"46.4.20",q:"Explain what is meant by the human factors concept.",a:"The human factors concept is the body of knowledge about how people interact with machines, tasks and their environment — covering perception, memory, workload, stress, communication and error. Applying it means designing training, procedures and equipment to fit human capabilities and limits."},
+ {r:"46.4.22",q:"Explain what is meant by a systems approach.",a:"A systems approach treats an accident as the result of interacting elements — people, technology, organisation and environment — rather than a single cause or a 'last man' blame. It looks for the chain of contributing factors (including weak links like training and culture) so that fixes address root causes."},
+ {r:"46.4.24",q:"Explain what is meant by a safety management system.",a:"A Safety Management System (SMS) is a structured, proactive way to identify hazards, assess risks and implement controls before they cause harm — rather than reacting only after incidents. It includes hazard identification, risk assessment, safety reporting, action tracking and continuous review."},
+ {r:"46.4.26",q:"Explain what is meant by an organisational culture.",a:"Organisational culture is the shared values, beliefs, norms and unwritten rules that determine 'how things are done around here'. It shapes behaviour more than any written policy — a strong safety culture means everyone, from top to bottom, genuinely prioritises safety over schedule or cost."}
+]});
+DATA.push(
+{r:"46.6",t:"The human body and its systems",s:"Physiology and the Effects of Flight",cards:[
+ {r:"46.6.2",q:"Explain what is meant by homeostasis.",a:"Homeostasis is the body's ability to keep its internal environment (temperature, pH, blood pressure, glucose, fluid balance) stable despite external changes. It works through negative feedback loops — sensors detect a change, the brain coordinates a correction via the nervous and endocrine systems, restoring normal conditions."},
+ {r:"46.6.4",q:"Explain what is meant by metabolism.",a:"Metabolism is the sum of all chemical reactions in the body that convert food and oxygen into energy (ATP) to sustain life. Rate of metabolism rises with exercise, stress, cold or heat, and affects oxygen demand — relevant in flight because increased metabolic rate increases oxygen consumption and CO2 production."},
+ {r:"46.6.6",q:"Explain what is meant by a stimulus.",a:"A stimulus is any change in the internal or external environment that the body detects and responds to — e.g. light, sound, pressure, temperature, chemicals, or pain. A receptor senses it, sends a signal to the nervous system, which produces an appropriate response."},
+ {r:"46.6.8",q:"Explain what is meant by a response.",a:"A response is the body's reaction to a stimulus — e.g. muscles contracting, glands secreting, or blood vessels dilating. In flight, responses include pupil dilation in low light, increased heart rate under stress, and the vestibular system adjusting to acceleration."},
+ {r:"46.6.10",q:"Explain what is meant by a receptor.",a:"A receptor is a specialised cell or structure that detects a specific stimulus (light, sound, pressure, chemical) and converts it into a nerve impulse — transduction. Examples include photoreceptors in the eye, hair cells in the inner ear, and stretch receptors in the lungs."},
+ {r:"46.6.12",q:"Explain what is meant by the central nervous system.",a:"The CNS consists of the brain and spinal cord. It receives, processes and integrates all sensory information and coordinates responses by sending signals through the peripheral nerves. The brain controls higher functions — thought, memory, judgement, coordination — critical for safe piloting."},
+ {r:"46.6.14",q:"Explain what is meant by the peripheral nervous system.",a:"The PNS consists of all the nerves connecting the CNS to the rest of the body (muscles, glands, organs). It has a sensory/afferent division (carries information to the brain) and a motor/efferent division (carries commands out), enabling the reflexes and voluntary movements needed in flight."},
+ {r:"46.6.16",q:"Explain what is meant by the autonomic nervous system.",a:"The ANS controls involuntary functions — heart rate, digestion, gland secretion, pupil size — with no conscious control. It has two branches: sympathetic (fight-or-flight, raises heart rate and alertness) and parasympathetic (rest-and-digest, calms the body). Stress in flight is largely a sympathetic response."},
+ {r:"46.6.18",q:"Explain what is meant by the sympathetic nervous system.",a:"The sympathetic branch mediates the 'fight-or-flight' response: increases heart rate and blood pressure, dilates airways, reduces digestion, sharpens senses and releases adrenaline/cortisol. Useful for short-term alertness in an emergency, but prolonged activation contributes to stress."},
+ {r:"46.6.20",q:"Explain what is meant by the parasympathetic nervous system.",a:"The parasympathetic branch mediates 'rest-and-digest': slows heart rate, promotes digestion and conserves energy. It balances the sympathetic system, allowing recovery after stress. A pilot's ability to return to calm, controlled flying depends on this counter-balance."}
+]},
+{r:"46.8",t:"The eye and vision",s:"Physiology and the Effects of Flight",cards:[
+ {r:"46.8.2",q:"Explain what is meant by visual acuity.",a:"Visual acuity is the sharpness or clarity of central vision — how finely detail can be resolved. It is measured by reading a test chart at a standard distance (e.g. 6 m). Good acuity is essential for reading instruments and identifying obstacles, but it does not cover night vision or peripheral awareness."},
+ {r:"46.8.4",q:"Explain what is meant by central vision.",a:"Central vision is the small, high-resolution area of vision through which we read fine detail — served by the fovea (the cone-rich centre of the retina). It has a narrow field (about 1–2 degrees) but excellent acuity; pilots use it deliberately to focus on individual instruments."},
+ {r:"46.8.6",q:"Explain what is meant by peripheral vision.",a:"Peripheral vision is the wide area of vision around central vision, served by rods in the retina. It has low detail resolution but a large field (about 180 degrees) and is far more sensitive to dim light and motion — vital for scanning the horizon and detecting other aircraft."},
+ {r:"46.8.8",q:"Explain what is meant by dark adaptation.",a:"Dark adaptation is the eye's gradual adjustment to low-light conditions as rod cells become active (cones are less useful in the dark). It takes about 20–30 minutes to fully adapt and is easily ruined by bright light or smoking. Pilots use dim red lights and peripheral vision at night."},
+ {r:"46.8.10",q:"Explain what is meant by colour perception.",a:"Colour perception is the eye's ability to distinguish colours, served by cone cells (three types for red, green and blue). It is essential for reading coloured instruments, lights and charts. Colour vision deteriorates in low light; at night pilots rely on brightness rather than colour."},
+ {r:"46.8.12",q:"Explain what is meant by depth perception.",a:"Depth perception is the ability to judge distance and three-dimensional position. Binocular (two-eye) cues such as convergence and parallax give strong depth perception at close range, while monocular cues — relative size, overlap, motion parallax — help at distance. It aids judging altitude and spacing from other aircraft."},
+ {r:"46.8.14",q:"Explain what is meant by the field of vision.",a:"The field of vision (visual field) is the total area a person can see without moving the eyes or head — roughly 180 degrees horizontally but only about 30–45 degrees of useful detail in front. It narrows with age, stress and tunnel vision under fear."},
+ {r:"46.8.16",q:"Explain what is meant by accommodation.",a:"Accommodation is the eye's ability to change focus between near and far objects by the ciliary muscle changing the shape of the lens. It allows a pilot to read an instrument (near) then refocus on the horizon or another aircraft (far). This near–far cycling contributes to eye strain; 'relaxing' focus helps."},
+ {r:"46.8.18",q:"Explain what is meant by night vision.",a:"Night vision is vision under low-light conditions, dominated by rod cells. It has much lower acuity and no colour, but greater sensitivity to dim light and motion. Pilots should use peripheral (off-centre) vision to spot aircraft, avoid staring at bright sources, and allow time for dark adaptation."},
+ {r:"46.8.20",q:"Explain what is meant by the retina.",a:"The retina is the light-sensitive layer lining the back of the eye containing photoreceptors: rods (peripheral, night vision, motion) and cones (central, detail, colour). Light is converted to nerve impulses here and sent via the optic nerve to the brain. The fovea at its centre has the highest cone concentration."}
+]},
+{r:"46.10",t:"The ear and balance",s:"Physiology and the Effects of Flight",cards:[
+ {r:"46.10.2",q:"Explain what is meant by the vestibular system.",a:"The vestibular (balance) system sits in the inner ear and detects head position, rotation and acceleration through three semicircular canals (rotation) and two otolith organs (gravity/linear). It tells the brain which way is up and how the head is moving — key for spatial orientation."},
+ {r:"46.10.4",q:"Explain what is meant by the semicircular canals.",a:"The three semicircular canals are fluid-filled loops oriented in different planes that detect rotational (angular) acceleration of the head. When rotation stops, the fluid keeps moving briefly, which can produce a false sense of continued turn — a basis of spatial disorientation."},
+ {r:"46.10.6",q:"Explain what is meant by the otolith organs.",a:"The otolith organs (utricle and saccule) detect linear acceleration and head position relative to gravity via tiny crystals on hair cells. They inform the brain about pitch, roll and vertical movement — but they are poorly tuned for sustained steady-state accelerations, which can mislead orientation."},
+ {r:"46.10.8",q:"Explain what is meant by spatial disorientation.",a:"Spatial disorientation is a loss of the correct perception of the aircraft's position, attitude or motion — often caused when inner-ear fluid signals conflict with visual information (e.g. in cloud). It is the 'gravity of flight' and can induce dangerous illusions such as the 'leans' or false horizon."},
+ {r:"46.10.10",q:"Explain what is meant by equilibrium.",a:"Equilibrium is the body's sense of balance — knowing which way is up and keeping a steady posture. It depends on the vestibular system, vision and proprioception (muscle/joint sensors) working together. When these senses give conflicting signals in flight, the pilot can become disoriented."},
+ {r:"46.10.12",q:"Explain what is meant by the inner ear.",a:"The inner ear contains both the balance organs (vestibular system: semicircular canals and otoliths) and the cochlea for hearing. It is filled with fluid and delicate hair cells, making it sensitive to acceleration, rotation and pressure changes encountered in flight."},
+ {r:"46.10.14",q:"Explain what is meant by the middle ear.",a:"The middle ear contains three small bones (ossicles) that transmit sound vibrations from the eardrum to the inner ear, and the Eustachian tube that equalises pressure across the eardrum. In flight it must ventilate as altitude changes; failure causes barotrauma — pain or injury."},
+ {r:"46.10.16",q:"Explain what is meant by the outer ear.",a:"The outer ear (pinna and ear canal) collects and funnels sound to the eardrum. It provides limited protection but mainly helps localise sounds. In flight it does not protect against pressure change or noise, so hearing protection for cockpit noise still relies on headsets or plugs."}
+]});
+DATA.push(
+{r:"46.12",t:"Blood and circulation",s:"Physiology and the Effects of Flight",cards:[
+ {r:"46.12.2",q:"Explain what is meant by blood.",a:"Blood is a connective tissue that carries oxygen, nutrients, hormones and waste around the body. It consists of plasma (fluid) and cells — red blood cells (carry oxygen via haemoglobin), white blood cells (defence) and platelets (clotting). Adequate blood flow to the brain is essential for consciousness."},
+ {r:"46.12.4",q:"Explain what is meant by the cardiovascular system.",a:"The cardiovascular system comprises the heart, blood vessels and blood. The heart pumps blood through arteries to tissues and back via veins, delivering oxygen and removing CO2. Its efficient operation is vital in flight, where acceleration (G-forces) can shift blood and impair circulation."},
+ {r:"46.12.6",q:"Explain what is meant by the heart.",a:"The heart is a muscular pump with four chambers that drives the circulatory system. It beats rhythmically (the pulse), pushing oxygenated blood to the body via the left side and receiving it back on the right. Heart rate increases with demand — exercise, stress, altitude — and can be affected by G-forces."},
+ {r:"46.12.8",q:"Explain what is meant by arteries.",a:"Arteries are blood vessels that carry blood away from the heart, generally oxygenated (except the pulmonary artery). They have thick, elastic walls to withstand high pressure and distribute blood throughout the body at sufficient pressure to reach the brain and muscles."},
+ {r:"46.12.10",q:"Explain what is meant by veins.",a:"Veins carry blood back to the heart, generally deoxygenated (except the pulmonary vein). They have thinner walls and lower pressure, with one-way valves that prevent backflow — important because venous return against gravity (e.g. legs) relies on muscle pumps and these valves."},
+ {r:"46.12.12",q:"Explain what is meant by capillaries.",a:"Capillaries are the tiny, thin-walled vessels where exchange actually occurs: oxygen and nutrients leave the blood into tissues while CO2 and wastes enter the blood. Their small diameter slows flow to allow this diffusion, which is essential for tissue oxygenation."},
+ {r:"46.12.14",q:"Explain what is meant by circulation.",a:"Circulation is the continuous movement of blood around the body through the cardiovascular system — from heart to lungs (pulmonary) and to the tissues (systemic). Maintaining adequate circulation to the brain and muscles is critical; impairment causes dizziness, blackout or loss of consciousness."},
+ {r:"46.12.16",q:"Explain what is meant by blood pressure.",a:"Blood pressure is the force of blood against artery walls, generated by the heart's pumping and vascular resistance (systolic/diastolic). It must be high enough to push blood to the brain; in flight, positive G-forces pull blood downward, reducing cerebral perfusion and risking grey-out or blackout."},
+ {r:"46.12.18",q:"Explain what is meant by pulse.",a:"Pulse is the palpable rhythmic expansion of arteries as the heart ejects blood — a measure of heart rate. It rises with exercise, stress, pain and altitude (to help deliver oxygen) and can be an indicator of physiological strain or hypoxia."},
+ {r:"46.12.20",q:"Explain what is meant by haemoglobin.",a:"Haemoglobin is the iron-rich protein in red blood cells that binds and carries oxygen from the lungs to tissues (and some CO2 back). Its concentration determines how much oxygen blood can carry; reduced haemoglobin (anaemia) or impaired binding (e.g. carbon monoxide) reduces oxygen delivery."}
+]},
+{r:"46.14",t:"Breathing and respiration",s:"Physiology and the Effects of Flight",cards:[
+ {r:"46.14.2",q:"Explain what is meant by breathing.",a:"Breathing (ventilation) is the mechanical process of moving air into and out of the lungs — inspiration (inhalation) driven by the diaphragm contracting, and expiration (exhalation). It supplies fresh oxygen to the alveoli and expels carbon dioxide."},
+ {r:"46.14.4",q:"Explain what is meant by respiration.",a:"Respiration is the overall process of gas exchange: external respiration (oxygen into blood, CO2 out, in the lungs) and internal/cellular respiration (cells using oxygen to produce energy). Together with breathing, it sustains the body's oxygen supply and removes metabolic waste."},
+ {r:"46.14.6",q:"Explain what is meant by the respiratory system.",a:"The respiratory system includes the airways (nose, trachea, bronchi), lungs and alveoli, plus the diaphragm and intercostal muscles. Its function is to bring oxygen into the body and remove carbon dioxide — critical at altitude where lower air pressure reduces available oxygen."},
+ {r:"46.14.8",q:"Explain what is meant by the lungs.",a:"The lungs are the organs of gas exchange, made up of millions of alveoli surrounded by capillaries. Oxygen diffuses from inhaled air into the blood and CO2 diffuses out to be exhaled. Their large surface area makes exchange efficient — but only while adequately ventilated."},
+ {r:"46.14.10",q:"Explain what is meant by the diaphragm.",a:"The diaphragm is the main muscle of breathing: it contracts and flattens to expand the chest cavity, drawing air in (inspiration), then relaxes to let air out. It works with intercostal muscles; effective breathing under stress or load depends on keeping this rhythm controlled."},
+ {r:"46.14.12",q:"Explain what is meant by oxygen.",a:"Oxygen is the gas cells need to produce energy (ATP) from food via respiration. It is carried in blood bound to haemoglobin. At altitude, lower partial pressure reduces how much oxygen enters the blood, so even 'normal' breathing may not supply enough — hence supplemental oxygen."},
+ {r:"46.14.14",q:"Explain what is meant by carbon dioxide.",a:"Carbon dioxide (CO2) is a waste product of cellular respiration, carried in blood back to the lungs and exhaled. Its level in the blood is a key driver of breathing rate — rising CO2 stimulates deeper, faster breathing, while hyperventilating lowers it and can cause dizziness."},
+ {r:"46.14.16",q:"Explain what is meant by an alveolus.",a:"An alveolus is a tiny air sac at the end of the bronchioles where gas exchange occurs; oxygen diffuses across its thin wall into surrounding capillaries and CO2 diffuses out. The lungs contain hundreds of millions, giving a huge surface area for efficient exchange."},
+ {r:"46.14.18",q:"Explain what is meant by the trachea.",a:"The trachea (windpipe) is the tube that carries air between the larynx and the bronchi into the lungs. It is kept open by cartilage rings. In flight, a blocked or irritated airway impairs ventilation — relevant for colds, hay fever or smoke exposure."},
+ {r:"46.14.20",q:"Explain what is meant by the bronchi.",a:"The bronchi are the two main branches that carry air from the trachea into each lung, subdividing into progressively smaller bronchioles reaching the alveoli. Their mucus-lined cilia trap and remove particles; irritation (smoke, fumes) impairs this cleaning function."}
+]});
+DATA.push(
+{r:"46.16",t:"Digestion and nutrition",s:"Physiology and the Effects of Flight",cards:[
+ {r:"46.16.2",q:"Explain what is meant by digestion.",a:"Digestion is the breakdown of food into small molecules that can be absorbed into the blood and used for energy, growth and repair. It involves mechanical (chewing, churning) and chemical (enzymes, acids) processes along the digestive tract."},
+ {r:"46.16.4",q:"Explain what is meant by the digestive system.",a:"The digestive system is the tract and accessory organs that process food: mouth, oesophagus, stomach, small and large intestines, plus the liver, pancreas and gallbladder. It converts food into absorbable nutrients and eliminates waste."},
+ {r:"46.16.6",q:"Explain what is meant by absorption.",a:"Absorption is the passage of digested nutrients (glucose, amino acids, fatty acids, water, vitamins) from the gut into the blood or lymph, mainly in the small intestine. These then supply energy and building blocks for the body — including the brain and muscles in flight."},
+ {r:"46.16.8",q:"Explain what is meant by metabolism (in digestion).",a:"In this context, metabolism is how the body uses absorbed nutrients: carbohydrates give quick energy, fats store long-term energy, and proteins support repair. The rate of metabolism affects oxygen demand and hunger — a hungry or low-energy pilot has reduced performance."},
+ {r:"46.16.10",q:"Explain what is meant by enzymes.",a:"Enzymes are biological catalysts that speed up the chemical breakdown of food without being consumed — e.g. amylase for starch, lipase for fat, protease for protein. They act at specific sites and are essential for efficient digestion and nutrient release."},
+ {r:"46.16.12",q:"Explain what is meant by the stomach.",a:"The stomach stores food and mixes it with acid and enzymes to begin chemical digestion (especially proteins). It releases chyme gradually into the small intestine. Its contents and comfort can be affected by motion, stress and certain foods — relevant for pilot comfort on duty."},
+ {r:"46.16.14",q:"Explain what is meant by the small intestine.",a:"The small intestine is the main site of digestion completion and nutrient absorption into the blood. Its inner surface is folded with villi to maximise area. Most carbohydrates, proteins, fats and water are absorbed here."},
+ {r:"46.16.16",q:"Explain what is meant by the large intestine.",a:"The large intestine (colon) absorbs remaining water and electrolytes and forms/wastes into faeces for elimination. It houses gut bacteria that aid some digestion. Sluggish or disturbed function can affect comfort and concentration."},
+ {r:"46.16.18",q:"Explain what is meant by the liver.",a:"The liver is a major metabolic organ: it processes absorbed nutrients, stores glycogen and vitamins, detoxifies substances (including alcohol), and regulates blood sugar. Its role in clearing alcohol is why alcohol's effects persist long after drinking."},
+ {r:"46.16.20",q:"Explain what is meant by nutrition.",a:"Nutrition is the intake and use of food to supply energy, build tissue and regulate body functions. Balanced nutrition (carbohydrates, protein, fat, vitamins, minerals, water) sustains the alertness, judgement and endurance required for safe flight."}
+]},
+{r:"46.18",t:"Body temperature regulation",s:"Physiology and the Effects of Flight",cards:[
+ {r:"46.18.2",q:"Explain what is meant by body temperature.",a:"Normal core body temperature is about 37°C (98.6°F). It is produced mainly by metabolism and must be kept within a narrow range for enzymes and the brain to function properly — so it is tightly regulated."},
+ {r:"46.18.4",q:"Explain what is meant by thermoregulation.",a:"Thermoregulation is the body's control of its internal temperature to keep it near 37°C despite external conditions. It balances heat production (metabolism, muscle) against heat loss (sweating, blood flow to skin), coordinated by the hypothalamus."},
+ {r:"46.18.6",q:"Explain what is meant by the hypothalamus.",a:"The hypothalamus is a brain region that acts as the body's thermostat and control centre for temperature, thirst, hunger and the autonomic/endocrine responses. It detects core temperature changes and triggers heating or cooling responses to maintain homeostasis."},
+ {r:"46.18.8",q:"Explain what is meant by heat loss.",a:"Heat loss occurs through radiation, convection (air), conduction (contact) and evaporation of sweat. In a warm cabin the body sweats to lose heat; in cold conditions it conserves heat. Excessive heat loss can lead to hypothermia; excessive gain to heat stress."},
+ {r:"46.18.10",q:"Explain what is meant by sweating.",a:"Sweating is the primary cooling mechanism: sweat evaporates from the skin, removing heat and lowering body temperature. It is a key response in warm cabins or heavy clothing; dehydration from sweating impairs performance if not replaced."},
+ {r:"46.18.12",q:"Explain what is meant by shivering.",a:"Shivering is involuntary rapid muscle contraction that generates heat when the body is cold, helping maintain core temperature. It is a sign the body is struggling to stay warm and indicates exposure or inadequate insulation — relevant in unpressurised or cold environments."},
+ {r:"46.18.14",q:"Explain what is meant by vasodilation.",a:"Vasodilation is the widening of blood vessels (near the skin) to increase blood flow and release heat — a cooling response in warm conditions. It also helps distribute heat; conversely, vasoconstriction conserves heat in the cold."},
+ {r:"46.18.16",q:"Explain what is meant by vasoconstriction.",a:"Vasoconstriction is the narrowing of blood vessels to reduce blood flow and conserve heat in cold conditions, keeping warm blood near vital organs. It also occurs with G-forces and can affect circulation to extremities."},
+ {r:"46.18.18",q:"Explain what is meant by hypothermia.",a:"Hypothermia is a fall of core body temperature below normal due to excessive heat loss, impairing judgement, coordination and eventually consciousness. Gradual cooling first affects thinking (confusion), which is dangerous in flight before physical symptoms are obvious."},
+ {r:"46.18.20",q:"Explain what is meant by hyperthermia.",a:"Hyperthermia (heat illness) is an excessive rise in body temperature from heat gain exceeding loss, leading to dehydration, fatigue, dizziness and impaired judgement. Pilots in warm cabins or heavy gear should stay hydrated and cool."}
+]});
+DATA.push(
+{r:"46.20",t:"Noise and hearing",s:"Physiology and the Effects of Flight",cards:[
+ {r:"46.20.2",q:"Explain what is meant by noise.",a:"Noise is unwanted, unpleasant or harmful sound — in aviation, typically the engine and airframe roar of the cockpit. Prolonged exposure to high levels damages hearing; it also masks communications and alarms and increases fatigue and stress."},
+ {r:"46.20.4",q:"Explain what is meant by decibels.",a:"Decibels (dB) are the logarithmic unit used to measure sound intensity/level. Because the scale is logarithmic, a 10 dB increase is perceived as roughly twice as loud and represents ten times the acoustic energy — so small number increases represent large physical changes."},
+ {r:"46.20.6",q:"Explain what is meant by hearing.",a:"Hearing is the sense of detecting and interpreting sound: the outer ear collects it, the middle ear transmits vibrations, and the cochlea in the inner ear converts them to nerve signals sent to the brain. It is essential for communications, alarms and spatial awareness in flight."},
+ {r:"46.20.8",q:"Explain what is meant by hearing loss.",a:"Hearing loss is a reduced ability to detect sound, which can be temporary (temporary threshold shift after loud exposure) or permanent (noise-induced damage). Repeated cockpit noise without protection causes cumulative, irreversible loss — often first in the high frequencies."},
+ {r:"46.20.10",q:"Explain what is meant by tinnitus.",a:"Tinnitus is a ringing, buzzing or hissing in the ears with no external sound source. It can be a temporary effect of loud noise exposure or an early warning sign of permanent hearing damage — an important reason to use hearing protection consistently."},
+ {r:"46.20.12",q:"Explain what is meant by the action level.",a:"The action level (hearing conservation threshold) is the sound level at which protective measures are triggered — commonly about 85 dB(A) averaged over 8 hours. Above this, hearing protection should be used and exposure monitored to prevent damage."},
+ {r:"46.20.14",q:"Explain what is meant by noise-induced hearing loss.",a:"Noise-induced hearing loss (NIHL) is permanent damage caused by prolonged or intense noise exposure that destroys cochlear hair cells. It is cumulative, often first in high frequencies, and irreversible — which makes prevention through protection essential."},
+ {r:"46.20.16",q:"Explain what is meant by hearing protection.",a:"Hearing protection reduces the sound reaching the ear: noise-canceling or passive headsets/earplugs rated by their noise reduction (NRR). Using them in a noisy cockpit lowers exposure below damaging levels while still allowing communications and alarms."},
+ {r:"46.20.18",q:"Explain what is meant by the dosimeter.",a:"A dosimeter is a device worn to measure an individual's cumulative noise dose over time, helping assess whether exposure stays within safe limits. It supports hearing conservation programmes by identifying when protection or limits are needed."},
+ {r:"46.20.20",q:"Explain what is meant by the hierarchy of noise control.",a:"The hierarchy ranks control methods from most to least effective: eliminate the source, reduce at source (quieter equipment/engine), engineer controls (insulation, enclosures), administrative controls (limit exposure time, rotate tasks), and finally personal protective equipment (headsets/plugs) as the last line."}
+]});
+DATA.push(
+{r:"46.30",t:"Health",s:"Flying and Health",cards:[
+ {r:"46.30.2",q:"Explain what is meant by health.",a:"Health, per the WHO, is not merely the absence of disease but complete physical, mental and social well-being. For a pilot this means being fit to fly — physically and psychologically — so that judgement and performance are reliable."},
+ {r:"46.30.4",q:"Explain what is meant by fitness.",a:"Fitness is the capacity to perform the demands of flying safely — adequate cardiovascular endurance, strength, coordination, alertness and mental sharpness. Maintaining fitness supports concentration, stress tolerance and reaction time on duty."},
+ {r:"46.30.6",q:"Explain what is meant by well-being.",a:"Well-being is a state of overall physical, mental and social health — feeling good as well as functioning well. Good well-being (sleep, nutrition, low stress, support) underpins the alertness and judgement required for safe aviation work."},
+ {r:"46.30.8",q:"Explain what is meant by a medical condition.",a:"A medical condition is any disease, disorder or health problem that may affect a person's fitness to fly — from minor (cold, hay fever) to serious (cardiac, neurological). Some are disqualifying; others are manageable with monitoring and honest reporting."},
+ {r:"46.30.10",q:"Explain what is meant by a disease.",a:"A disease is a disorder of structure or function that impairs normal operation — e.g. infection, diabetes, heart disease. In an aviation context the concern is whether it can cause sudden incapacitation or degrade performance while flying."},
+ {r:"46.30.12",q:"Explain what is meant by a medical examination.",a:"A medical examination (e.g. CAA of NZ Class 1/2) assesses fitness to fly, checking cardiovascular, neurological, sensory and other systems for conditions that could impair safe operation. It confirms the pilot meets the medical standard for their licence."},
+ {r:"46.30.14",q:"Explain what is meant by a medical certificate.",a:"A medical certificate is the CAA-issued document confirming a pilot has passed the required medical examination and is fit to hold/perform duties under their licence. It must be current; flying without one (where required) is a regulatory breach."},
+ {r:"46.30.16",q:"Explain what is meant by self-declaration.",a:"Self-declaration is the pilot's duty to honestly report any condition, medication or change in health that could affect their fitness to fly — even if not caught by a routine check. It is a continuous obligation and central to aviation safety."},
+ {r:"46.30.18",q:"Explain what is meant by the duty of care.",a:"The duty of care is the responsibility owed to passengers, crew and the public to act in a way that does not endanger them — including managing one's own health, reporting hazards and refusing to fly when unfit. It underpins professional accountability."},
+ {r:"46.30.20",q:"Explain what is meant by the fitness to fly.",a:"Fitness to fly is the state of being physically and mentally able to perform flight duties safely without risk to others. It depends on medical condition, medication, sleep, alcohol, stress and environment — a pilot must be fit for the specific task before flying."}
+]},
+{r:"46.32",t:"Alcohol",s:"Flying and Health",cards:[
+ {r:"46.32.2",q:"Explain what is meant by alcohol.",a:"Alcohol (ethanol) is a central nervous system depressant that impairs judgement, coordination, reaction time and the ability to process information — even at low blood-alcohol levels. Because it degrades the very skills needed to fly, it is treated with zero tolerance in aviation."},
+ {r:"46.32.4",q:"Explain the restriction associated with the consumption of alcohol and flying.",a:"Under NZ rules (CAR 19.7 / CAA MIS 014) a pilot must not act as crew while intoxicated or impaired by any intoxicant — including alcohol — and there is NO safe blood-alcohol level and no legislated 'bottle-to-throttle' time. Even zero BAC can be unsafe because of hangover effects; operators may set stricter limits (e.g. 8–12 h). When in doubt, don't fly."},
+ {r:"46.32.6",q:"Explain what is meant by blood alcohol concentration.",a:"Blood alcohol concentration (BAC) is the amount of alcohol in the blood, usually expressed as a percentage or g/100 mL. It rises with intake and falls as the liver metabolises alcohol (roughly one standard drink per hour). In aviation the key point: any impairment from alcohol disqualifies you — there is no safe BAC to fly at."},
+ {r:"46.32.8",q:"Explain what is meant by hangover.",a:"Hangover is the lingering impairment after heavy drinking — fatigue, dehydration, headache and reduced coordination that can persist well beyond a zero BAC. Because it degrades performance, a pilot should not fly while experiencing hangover; when in doubt, don't fly."},
+ {r:"46.32.10",q:"Explain what is meant by tolerance.",a:"Tolerance is the reduced effect of alcohol for a person who drinks regularly — they may feel 'fine' at a BAC that still impairs performance. This false sense of being okay is dangerous: impairment occurs well before the feeling of intoxication, so tolerance can mask disqualifying levels."},
+ {r:"46.32.12",q:"Explain what is meant by absorption.",a:"Absorption is alcohol entering the bloodstream from the stomach and small intestine after drinking — faster on an empty stomach or with carbonated drinks. The rate affects how quickly BAC rises, so pre-flight timing of any drinking matters."},
+ {r:"46.32.14",q:"Explain what is meant by metabolism.",a:"Metabolism here is the liver breaking down alcohol (about one standard drink per hour) into non-toxic products. This fixed rate means you cannot 'speed up' sobriety — coffee or a cold shower do not clear alcohol, only time does."},
+ {r:"46.32.16",q:"Explain what is meant by elimination.",a:"Elimination is the removal of alcohol from the body, mainly via liver metabolism with small amounts through breath and urine. Because it proceeds at a fixed rate, pilots must allow sufficient time for full clearance (and to recover from hangover) before flying."},
+ {r:"46.32.18",q:"Explain what is meant by the zero tolerance policy.",a:"A zero-tolerance policy means alcohol use that impairs performance is not acceptable at all — aviation sets no safe drinking limit for crew. It reflects that even mild impairment of judgement or coordination is unacceptable when responsible for passengers' safety."},
+ {r:"46.32.20",q:"Explain what is meant by the 'bottle-to-throttle' rule.",a:"The 'bottle-to-throttle' concept is the minimum time between last drink and flying. In NZ there is no single legislated bottle-to-throttle period — the requirement is that you are not impaired (including hangover) at any BAC above zero tolerance; operators may impose their own limits (often 8–12 h). When in doubt, don't fly."}
+]});
+DATA.push(
+{r:"46.36",t:"Drugs",s:"Flying and Health",cards:[
+ {r:"46.36.2",q:"Explain what is meant by drugs.",a:"Drugs are substances that alter body or mind function — including prescription, over-the-counter and recreational. Many affect alertness, reaction time, judgement or cause drowsiness, so pilots must know their effects and report any medication that could impair them."},
+ {r:"46.36.4",q:"Explain what is meant by a pharmaceutical.",a:"A pharmaceutical (medicine) is a drug produced to treat or prevent illness — e.g. antibiotics, asthma inhalers, antihistamines. Some are safe in flight, but many (sedating antihistamines, some painkillers) cause drowsiness or impair performance and must be checked before flying."},
+ {r:"46.36.6",q:"Explain what is meant by a prescription.",a:"A prescription is a doctor's authorised instruction to supply a specific medicine at a dose. For pilots, any prescribed drug must be checked against fitness-to-fly requirements — some are prohibited or require medical assessment because of their effect on performance."},
+ {r:"46.36.8",q:"Explain what is meant by over-the-counter medication.",a:"Over-the-counter (OTC) medication is available without a prescription (e.g. painkillers, cold remedies, antihistamines). Despite being 'safe' to buy, many cause drowsiness or impair concentration — pilots must read labels and avoid flying on sedating OTC drugs."},
+ {r:"46.36.10",q:"Explain what is meant by a side effect.",a:"A side effect is an unintended effect of a drug — e.g. drowsiness, blurred vision, dizziness or impaired concentration. Even 'safe' medicines can have side effects that degrade the skills needed to fly, so pilots must know and monitor for them."},
+ {r:"46.36.12",q:"Explain what is meant by an interaction.",a:"An interaction is when one drug affects the action of another (or of alcohol/food), increasing or decreasing its effect — e.g. two sedating medicines together, or alcohol with a drowsy drug. Interactions can unpredictably impair performance and must be considered before flying."},
+ {r:"46.36.14",q:"Explain what is meant by dependence.",a:"Dependence is a physical or psychological reliance on a substance, where the body needs it to function normally and withdrawal occurs if stopped. It is dangerous for pilots (impairment, hiding use, performance degradation) and must be reported and managed."},
+ {r:"46.36.16",q:"Explain what is meant by addiction.",a:"Addiction is a compulsive, uncontrolled use of a substance despite harm — driven by psychological dependence. It impairs judgement and reliability and, if undisclosed, directly threatens flight safety; honest self-declaration and treatment are essential."},
+ {r:"46.36.18",q:"Explain what is meant by withdrawal.",a:"Withdrawal is the set of physical and psychological symptoms that occur when a regularly used drug (e.g. alcohol, benzodiazepines) is stopped or reduced — shaking, anxiety, tremor, insomnia. A pilot in withdrawal is impaired and unfit to fly."},
+ {r:"46.36.20",q:"Explain what is meant by the 'grey list'.",a:"The 'grey list' (as opposed to clearly safe or prohibited) refers to medicines of uncertain or conditional effect on fitness to fly — those that may be acceptable only under certain conditions or with medical clearance. Pilots must check such drugs against CAA/medical guidance before flying."}
+]},
+{r:"46.38",t:"Driving and aviation",s:"Flying and Health",cards:[
+ {r:"46.38.2",q:"Explain what is meant by the 'get there it-is' syndrome.",a:"The 'get-there-itis' (GTI) or 'get-there-it-is' pressure is the bias to complete a task — arriving on time, making the schedule — at the expense of safety. It drives pilots to continue in deteriorating conditions, ignore red flags and rationalise marginal decisions."},
+ {r:"46.38.4",q:"Explain what is meant by risk taking.",a:"Risk taking is accepting or creating more hazard than is justified in pursuit of a goal — e.g. pushing weather minima, cutting corners to save time. In aviation it often stems from get-there pressure and must be countered by recognising limits and stopping when unsafe."},
+ {r:"46.38.6",q:"Explain what is meant by the 'pilot in command' mindset.",a:"The PIC mindset is taking full, final responsibility for the safety of the flight — the authority and duty to stop or divert whenever necessary, regardless of schedule, cost or pressure. It means prioritising safety over convenience and acting on red flags."},
+ {r:"46.38.8",q:"Explain what is meant by situational awareness.",a:"Situational awareness (SA) is an accurate understanding of your current situation: the aircraft's state, weather, airspace, traffic, fuel and task progress. Good SA lets you anticipate problems; poor SA — a major cause of accidents — leads to being surprised."},
+ {r:"46.38.10",q:"Explain what is meant by decision making.",a:"Decision making is the process of recognising a situation, evaluating options and choosing an action. In aviation it must be structured (e.g. DECIDE model) and based on facts, to avoid biases like get-there pressure or overconfidence that lead to unsafe choices."},
+ {r:"46.38.12",q:"Explain what is meant by the 'stop' decision.",a:"The 'stop' decision is choosing to halt or divert a flight when conditions or your state make continuing unsafe — overriding schedule and cost pressure. It is the hallmark of a responsible PIC and is always an acceptable, correct decision."}
+]});
+DATA.push(
+{r:"46.40",t:"Stress",s:"Flying and Health",cards:[
+ {r:"46.40.2",q:"Explain what is meant by stress.",a:"Stress is the body's response to a demand that exceeds its current resources — a threat or challenge. It triggers physiological (adrenaline, raised heart rate) and psychological reactions. Moderate stress sharpens performance; excessive or chronic stress impairs judgement, memory and coordination."},
+ {r:"46.40.4",q:"Explain what is meant by a stressor.",a:"A stressor is any demand, event or condition that triggers the stress response — e.g. workload, time pressure, bad weather, conflict, noise, fatigue. Multiple stressors combine to load a pilot; identifying and managing them keeps performance in the optimal zone."},
+ {r:"46.40.6",q:"Explain what is meant by the fight-or-flight response.",a:"The fight-or-flight response is the sympathetic nervous system reaction to threat: adrenaline/cortisol release, raised heart rate and blood pressure, sharpened senses and redirected energy to muscles. Useful for short-term emergency response but counterproductive if prolonged."},
+ {r:"46.40.8",q:"Explain what is meant by the general adaptation syndrome.",a:"The General Adaptation Syndrome (Selye) describes the body's three-stage stress response: alarm (initial shock), resistance (adapting to sustained demand) and exhaustion (resources depleted, performance breaks down). Chronic unmanaged stress ends in exhaustion and burnout."},
+ {r:"46.40.10",q:"Explain what is meant by eustress.",a:"Eustress is positive, motivating stress — the 'good' stress that sharpens focus and improves performance up to an optimum (e.g. a challenging but manageable task). Beyond the optimum it becomes distress."},
+ {r:"46.40.12",q:"Explain what is meant by distress.",a:"Distress is negative, harmful stress where demands exceed coping ability — causing anxiety, poor concentration, tunnel vision and impaired judgement. It degrades aviation performance and must be reduced (rest, workload control) before or during a task."},
+ {r:"46.40.14",q:"Explain what is meant by the Yerkes-Dodson law.",a:"The Yerkes-Dodson law states performance rises with arousal/stress up to an optimum point, then declines as stress increases further. Low stress causes boredom/under-arousal; high stress causes anxiety and failure — pilots should aim for the mid 'flow' zone."},
+ {r:"46.40.16",q:"Explain what is meant by coping.",a:"Coping is the set of strategies used to manage stress — problem-focused (fixing the cause) or emotion-focused (calming, reframing). Effective coping keeps stress in the productive range; ineffective coping (avoidance, substance use) worsens it."},
+ {r:"46.40.18",q:"Explain what is meant by resilience.",a:"Resilience is the ability to recover quickly from stress and adversity and maintain good performance — built on preparation, realistic self-assessment, support and learning from experience. Resilient pilots bounce back from upsets without lasting impairment."},
+ {r:"46.40.20",q:"Explain what is meant by burnout.",a:"Burnout is the end stage of chronic stress: emotional exhaustion, cynicism/depersonalisation and reduced effectiveness. It erodes concentration, motivation and safety margins — a sign that workload or rest must be addressed."}
+]},
+{r:"46.42",t:"Fatigue",s:"Flying and Health",cards:[
+ {r:"46.42.2",q:"Explain what is meant by fatigue.",a:"Fatigue is the decline in physical and mental performance from sustained activity, insufficient rest or sleep — reducing alertness, reaction time, memory and judgement. It is a major aviation safety issue because it is gradual and hard to self-recognise."},
+ {r:"46.42.4",q:"Explain what is meant by tiredness.",a:"Tiredness is the mild, short-term feeling of reduced energy after activity — normally relieved by brief rest. It differs from fatigue: if not properly rested it accumulates into true fatigue with measurable performance loss."},
+ {r:"46.42.6",q:"Explain what is meant by sleep.",a:"Sleep is the periodic state of rest essential for recovery, memory consolidation and restoring alertness. Adequate, quality sleep before duty is the single most important defence against fatigue; its loss directly degrades flight performance."},
+ {r:"46.42.8",q:"Explain what is meant by insomnia.",a:"Insomnia is difficulty falling or staying asleep, reducing sleep quantity and quality. For pilots it builds up sleep debt and next-day fatigue — a significant risk to alertness that should be managed (sleep hygiene, medical help) rather than ignored."},
+ {r:"46.42.10",q:"Explain what is meant by the circadian rhythm.",a:"The circadian rhythm is the body's ~24-hour internal clock regulating sleepiness, alertness and temperature. It causes natural dips (e.g. post-lunch and late-night) and makes shift work/long-haul flying disrupt sleep — a key factor in fatigue planning."},
+ {r:"46.42.12",q:"Explain what is meant by jet lag.",a:"Jet lag is the disruption of the circadian rhythm after crossing time zones, causing misaligned sleepiness and poor sleep quality. It impairs alertness for days; pilots manage it with light exposure, timing naps and rest, and reporting reduced fitness."},
+ {r:"46.42.14",q:"Explain what is meant by the 'second wind'.",a:"The 'second wind' is a false surge of alertness in the later stages of fatigue (often adrenaline-driven) that masks how tired you really are — after which performance crashes. It is dangerous because it gives an unwarranted sense of being fine to continue."},
+ {r:"46.42.16",q:"Explain what is meant by microsleep.",a:"A microsleep is a brief (seconds) episode of actual sleep that can occur without warning in a fatigued person, during which the pilot has no control or awareness. It is one of the most dangerous fatigue effects — you do not know it happened."},
+ {r:"46.42.18",q:"Explain what is meant by the 'nodding off'.",a:"'Nodding off' is the loss of alertness where a fatigued pilot drifts into brief sleep or space-out, often at quiet moments (night, monotonous tasks). It signals significant fatigue and impaired performance — rest is required before continuing."},
+ {r:"46.42.20",q:"Explain what is meant by the 'fatigue syndrome'.",a:"Fatigue syndrome describes the cumulative, whole-body effects of chronic or acute fatigue: reduced alertness, poor memory, slower reactions, irritability and impaired judgement. It reflects that fatigue affects everything a pilot does and must be managed proactively."}
+]});
+DATA.push(
+{r:"46.44",t:"Cognition",s:"Aviation Psychology",cards:[
+ {r:"46.44.2",q:"Explain what is meant by cognition.",a:"Cognition is the mental processes involved in acquiring knowledge and understanding: perception, attention, memory, thinking, judgement and decision-making. In flight it underpins how a pilot interprets instruments, weather and traffic and chooses actions."},
+ {r:"46.44.4",q:"Explain what is meant by perception.",a:"Perception is the brain's interpretation of sensory information (sight, sound, feel) to make sense of the environment. It is not a passive recording — it is shaped by expectation, experience and context, which is why illusions and misreads occur in flight."},
+ {r:"46.44.6",q:"Explain what is meant by attention.",a:"Attention is the selective focus of awareness on particular information while ignoring other input. It has limited capacity — divided or overloaded attention (many tasks, distractions) causes items to be missed, a key source of in-flight errors."},
+ {r:"46.44.8",q:"Explain what is meant by memory.",a:"Memory is the ability to encode, store and retrieve information over time. Pilots rely on working memory (immediate task info) and long-term memory (procedures, checklists); overload, stress or inattention cause lapses that lead to errors."},
+ {r:"46.44.10",q:"Explain what is meant by thinking.",a:"Thinking is the higher mental process of reasoning, problem-solving and forming judgements — using concepts, rules and experience to interpret situations. Structured thinking (checklists, decision models) improves safety over unstructured 'gut' reactions."},
+ {r:"46.44.12",q:"Explain what is meant by judgement.",a:"Judgement is the ability to evaluate a situation and determine the correct or best course of action — weighing risks, options and consequences. Good aviation judgement combines knowledge, experience and humility (knowing your limits)."},
+ {r:"46.44.14",q:"Explain what is meant by reasoning.",a:"Reasoning is drawing conclusions from available information — deductive (from general rule to specific case) or inductive (from observations to a likely conclusion). It supports diagnosis of faults and predicting how a situation will develop."},
+ {r:"46.44.16",q:"Explain what is meant by problem solving.",a:"Problem solving is identifying a problem, analysing its causes, generating options and selecting/evaluating the best solution. In aviation it must be structured (e.g. DECIDE) so faults are diagnosed correctly rather than guessed at."},
+ {r:"46.44.18",q:"Explain what is meant by decision making.",a:"Decision making is choosing a course of action from available options based on the situation. Effective aviation decision making uses a structured model (DECIDE, DODAR/FDODAR, SADIE), relies on facts, and includes a 'stop' option when conditions are unsafe."},
+ {r:"46.44.20",q:"Explain what is meant by cognitive bias.",a:"Cognitive bias is a systematic error in thinking that distorts judgement — e.g. overconfidence, confirmation or get-there pressure. Biases are normal but dangerous in flight; awareness of common ones (and using checklists/crew) helps counter them."},
+ {r:"46.44.22",q:"Explain what is meant by confirmation bias.",a:"Confirmation bias is the tendency to seek, notice and favour information that confirms an existing belief or plan, while ignoring contradictory evidence. In flight it makes a pilot fix on one explanation (or keep going on plan) and miss red flags."},
+ {r:"46.44.24",q:"Explain the decision making models used in aviation.",a:"Common structured models: DECIDE (Define the problem, Establish goals, Collect information, Identify options, Decide/Execute, Evaluate); DODAR/FDODAR (Diagnose, Options, Decide, Assign, Review — with 'Find' the problem first); and SADIE (Scan, Assess, Decide, Implement, Evaluate). They force a disciplined, bias-resistant process."}
+]},
+{r:"46.46",t:"Memory",s:"Aviation Psychology",cards:[
+ {r:"46.46.2",q:"Explain what is meant by memory.",a:"Memory is the system for encoding, storing and retrieving information. It underpins everything from reading a checklist to recalling procedures under stress; understanding its limits helps pilots use aids (checklists, briefings) to compensate."},
+ {r:"46.46.4",q:"Explain what is meant by short-term memory.",a:"Short-term/working memory holds a small amount of information for seconds to a minute (about 7±2 items) while it is being used. It is easily overloaded and cleared by distraction — hence chunking and writing things down in the cockpit."},
+ {r:"46.46.6",q:"Explain what is meant by long-term memory.",a:"Long-term memory stores information for minutes to a lifetime with effectively unlimited capacity — e.g. procedures, checklists, past experiences. It is accessed through retrieval; stress and lack of rehearsal can cause 'blanking' even when knowledge exists."},
+ {r:"46.46.8",q:"Explain what is meant by working memory.",a:"Working memory is the active part of short-term memory used to manipulate information for a task — holding a frequency, an altitude and a heading while deciding. Its limited capacity means dividing attention between many items degrades performance."},
+ {r:"46.46.10",q:"Explain what is meant by encoding.",a:"Encoding is the process of converting sensory input into a form the brain can store — deeper, meaningful processing (chunking, linking to experience) produces stronger memories than passive repetition. Good briefing and rehearsal improve encoding."},
+ {r:"46.46.12",q:"Explain what is meant by storage.",a:"Storage is retaining encoded information in memory over time. Information moves from short-term toward long-term storage through attention, rehearsal and meaning; without this, details are quickly lost — so critical items should be written or repeated."},
+ {r:"46.46.14",q:"Explain what is meant by retrieval.",a:"Retrieval is accessing stored information when needed — e.g. recalling a procedure or a contact frequency. It can fail under stress or without cues even when the information was learned; checklists and mnemonics act as retrieval aids."},
+ {r:"46.46.16",q:"Explain what is meant by recall.",a:"Recall is retrieving information from memory without seeing it (e.g. remembering a clearance) — stronger than recognition but harder under load. Pilots use structured briefings and checklists to support accurate recall of critical data."},
+ {r:"46.46.18",q:"Explain what is meant by recognition.",a:"Recognition is identifying information as familiar when presented again (e.g. recognising a fault on a checklist) — easier than recall because the cue is present. Well-designed checklists and displays exploit recognition to reduce memory load."},
+ {r:"46.46.20",q:"Explain what is meant by forgetting.",a:"Forgetting is the loss of access to stored information over time or due to interference, stress or lack of rehearsal. It is why procedures are trained, repeated and supported by checklists rather than relying on unaided memory."}
+]});
+DATA.push(
+{r:"46.48",t:"Attention",s:"Aviation Psychology",cards:[
+ {r:"46.48.2",q:"Explain what is meant by attention.",a:"Attention is the limited mental focus on selected information while ignoring other input. Because capacity is small, dividing or overloading it (multiple tasks, distractions) causes items to be missed — a leading cause of in-flight errors."},
+ {r:"46.48.4",q:"Explain what is meant by selective attention.",a:"Selective attention is focusing on some stimuli while filtering out others (e.g. listening to ATC while ignoring cabin noise). It is essential but means unattended channels are missed — so structured scanning and briefings are needed to cover all critical inputs."},
+ {r:"46.48.6",q:"Explain what is meant by divided attention.",a:"Divided attention is trying to process several things at once (e.g. flying the aircraft, comms and nav simultaneously). Capacity is limited, so performance on each task drops; critical tasks should not be divided — use automation or sequencing."},
+ {r:"46.48.8",q:"Explain what is meant by sustained attention.",a:"Sustained attention (vigilance) is maintaining focus over a long period (e.g. monitoring instruments on a quiet leg). It declines with time, boredom and low workload — vigilance decrement causes 'misses' late in a task."},
+ {r:"46.48.10",q:"Explain what is meant by attentional tunneling.",a:"Attentional tunneling (tunnel vision of the mind) is narrowing focus onto one thing so much that other important information is missed — e.g. fixating on a problem and losing awareness of altitude or traffic. It is worsened by stress and workload."},
+ {r:"46.48.12",q:"Explain what is meant by the 'red flags' of poor attention.",a:"Red flags are early warning signs that attention/awareness is degrading — fixating on one item, losing track of time or task, missing checklists, feeling rushed, or rationalising a deviation (plan-continuation/'get-there' bias). Recognising them prompts you to stop, breathe and re-scan."},
+ {r:"46.48.14",q:"Explain what is meant by the 'startle effect'.",a:"The startle effect is an involuntary reaction to a sudden, unexpected stimulus (noise, movement) that briefly disrupts attention and performance. In flight it can cause an unwanted control input or a missed item — awareness helps you recover quickly."},
+ {r:"46.48.16",q:"Explain what is meant by the 'cockpit clutter'.",a:"Cockpit clutter refers to unnecessary items, displays or distractions competing for limited attention and space. It increases workload and error risk; good design and tidiness (and decluttering) help keep attention on the essential flight-critical information."}
+]});
+DATA.push(
+{r:"46.50",t:"Communication",s:"Aviation Psychology",cards:[
+ {r:"46.50.2",q:"Explain what is meant by communication.",a:"Communication is the process of transmitting and receiving information between people — in aviation, clear exchange of flight-critical data (clearances, positions, intentions). Errors or ambiguities here are a major cause of incidents, so standard phrases and read-backs are used."},
+ {r:"46.50.4",q:"Explain what is meant by verbal communication.",a:"Verbal communication is exchanging information through spoken words (e.g. radio with ATC, crew briefings). It relies on clear phrasing, standard aviation terminology, correct pronunciation and confirmation (read-back) to avoid misunderstanding."},
+ {r:"46.50.6",q:"Explain what is meant by non-verbal communication.",a:"Non-verbal communication conveys information without words — tone of voice, facial expression, eye contact, posture and gestures. It carries much of the meaning in crew interactions; mismatches between words and non-verbal cues can hide disagreement or confusion."},
+ {r:"46.50.8",q:"Explain what is meant by active listening.",a:"Active listening is fully concentrating on the speaker — checking understanding, asking for clarification, and confirming key points (e.g. read-back). It prevents miscommunication; passive or distracted listening misses critical information."},
+ {r:"46.50.10",q:"Explain what is meant by a message.",a:"A message is the information sent from sender to receiver — e.g. an ATC instruction or a pilot's report. For it to be effective it must be clear, complete and unambiguous; noise, accent or poor phrasing can corrupt the message."},
+ {r:"46.50.12",q:"Explain what is meant by a sender.",a:"The sender is the person originating the message (e.g. ATC issuing a clearance, or a pilot reporting). The sender's responsibility is to phrase it clearly and check it was understood — using standard terms and confirming via read-back."},
+ {r:"46.50.14",q:"Explain what is meant by a receiver.",a:"The receiver is the person who gets and interprets the message (e.g. the pilot receiving a clearance). Their responsibility is to listen actively, decode it correctly, and confirm understanding — typically by reading back the critical parts."},
+ {r:"46.50.16",q:"Explain what is meant by feedback.",a:"Feedback is the response that confirms whether the message was received and understood as intended — in aviation, the read-back of clearances and the sender's confirmation. It closes the communication loop and catches errors before they matter."},
+ {r:"46.50.18",q:"Explain what is meant by noise (in communication).",a:"Noise here is anything that distorts or blocks the message — physical (static, engine roar), semantic (unclear phrasing, jargon) or psychological (stress, assumption). Reducing noise and confirming understanding keeps communications safe."},
+ {r:"46.50.20",q:"Explain what is meant by a barrier to communication.",a:"A barrier to communication is anything that hinders clear exchange — language/accent differences, stress, poor radio, hierarchy (not speaking up), or assuming you know what the other means. Crew Resource Management and read-backs are used to overcome them."}
+]});
+DATA.push(
+{r:"46.52",t:"Teamwork",s:"Aviation Psychology",cards:[
+ {r:"46.52.2",q:"Explain what is meant by teamwork.",a:"Teamwork is people working together toward a shared goal, coordinating roles and information so the whole performs better than the sum of individuals. In aviation it means the crew sharing workload, cross-checking and communicating to fly safely."},
+ {r:"46.52.4",q:"Explain what is meant by a team.",a:"A team is a group of people with complementary roles working toward a common objective — in flight, the flight crew (and ground/ATC interfaces). Effective teams have clear roles, mutual trust and open communication."},
+ {r:"46.52.6",q:"Explain what is meant by Crew Resource Management.",a:"Crew Resource Management (CRM) is the systematic use of all available resources — people, equipment, procedures and information — to manage workload and risk safely. It includes leadership, communication, decision-making and error management within the crew."},
+ {r:"46.52.8",q:"Explain what is meant by leadership.",a:"Leadership in a cockpit is guiding the team, allocating workload, making final decisions and creating an environment where others can speak up. Effective leaders are decisive but open to input — the 'stop' decision belongs to any crew member who sees danger."},
+ {r:"46.52.10",q:"Explain what is meant by assertiveness.",a:"Assertiveness is confidently and respectfully stating your view, concern or disagreement — including challenging a superior when safety is at risk (e.g. a junior pilot questioning an unsafe instruction). It is essential for catching errors in the crew."},
+ {r:"46.52.12",q:"Explain what is meant by conflict.",a:"Conflict is disagreement or tension between team members — over a decision, workload or approach. Unmanaged it degrades teamwork and safety; handled openly and professionally it can surface important concerns and improve decisions."},
+ {r:"46.52.14",q:"Explain what is meant by cooperation.",a:"Cooperation is working together willingly toward the shared goal — sharing information, helping with workload, and supporting each other. It underpins effective teamwork and reduces the chance that one person's error or overload goes uncaught."},
+ {r:"46.52.16",q:"Explain what is meant by coordination.",a:"Coordination is organising team actions so they fit together without gaps or clashes — e.g. who flies, who monitors, who calls out. Clear coordination (briefings, callouts, cross-checks) prevents duplicated or missed tasks."}
+]});
+DATA.push(
+{r:"46.54",t:"Safety and organisational culture",s:"Aviation Psychology",cards:[
+ {r:"46.54.2",q:"Explain what is meant by safety.",a:"Safety is the condition of risk being reduced to, and maintained at, an acceptable level — protecting people from harm in aviation operations. It is achieved proactively through design, procedures, training and a strong safety culture, not just by avoiding accidents."},
+ {r:"46.54.4",q:"Explain what is meant by a hazard.",a:"A hazard is anything with the potential to cause harm — a condition, action or situation (e.g. slippery runway, ambiguous procedure, fatigue). Identifying hazards is the first step in safety management so they can be assessed and controlled."},
+ {r:"46.54.6",q:"Explain what is meant by a risk.",a:"Risk is the combination of the likelihood of a hazard occurring and the severity of its consequences. Risk assessment (likelihood × severity) prioritises which hazards to control first — high-impact, likely risks get top attention."},
+ {r:"46.54.8",q:"Explain what is meant by a safety culture.",a:"A safety culture is the shared attitudes, beliefs and behaviours about safety in an organisation. A strong (just) safety culture encourages honest reporting of errors and hazards for learning, rather than blame — so problems are fixed before they cause harm."},
+ {r:"46.54.10",q:"Explain what is meant by a just culture.",a:"A just culture distinguishes honest human error from reckless or deliberate violations: errors are met with support and learning (no unjust punishment), while gross negligence is addressed. This encourages people to report mistakes, which is essential for safety."},
+ {r:"46.54.12",q:"Explain what is meant by a reporting culture.",a:"A reporting culture is one where people feel safe and encouraged to report errors, hazards and near-misses without fear of blame. These reports feed the SMS, revealing systemic weaknesses before they cause accidents."},
+ {r:"46.54.14",q:"Explain what is meant by a learning culture.",a:"A learning culture treats every error, incident and report as an opportunity to understand causes and improve — rather than simply blaming individuals. It drives continuous improvement through investigation, feedback and better design/training."},
+ {r:"46.54.16",q:"Explain what is meant by a blame culture.",a:"A blame culture punishes individuals for errors instead of learning from them, so people hide mistakes and hazards go unreported. It undermines safety because the organisation loses the information it needs to fix underlying problems."},
+ {r:"46.54.18",q:"Explain what is meant by an organisational culture.",a:"Organisational culture is the unwritten 'way things are done' — the shared values and norms that actually drive behaviour, often more than formal policies. A positive safety-focused culture means everyone genuinely prioritises safety over schedule or cost."},
+ {r:"46.54.20",q:"Explain what is meant by a safety management system.",a:"A Safety Management System (SMS) is the structured, proactive process for identifying hazards, assessing risk and implementing/monitoring controls — including reporting, investigation and continuous review. It shifts focus from reacting to accidents to preventing them."}
+]});
+DATA.push(
+{r:"46.56",t:"Flight deck design",s:"Ergonomics",cards:[
+ {r:"46.56.2",q:"Explain the basic principles of control, display and workspace design.",a:"Controls should be arranged logically, consistently and with clear feedback (position/shape/movement matching their function — 'self-describing'). Displays should present relevant information clearly, in a natural scan order, without clutter or ambiguity. The workspace must fit the pilot's size and reach so everything is accessible without strain."},
+ {r:"46.56.4",q:"Explain the importance of reach and comfort in flight deck design.",a:"Reach: controls and displays must be within the pilot's comfortable, safe reach (and sight lines) so they can be operated accurately without overreaching or losing sight of instruments — critical under stress. Comfort: a correctly sized, adjustable seat and workspace reduce fatigue and allow the pilot to maintain good posture and visibility for the whole flight."},
+ {r:"46.56.6",q:"Explain what is meant by anthropometry.",a:"Anthropometry is the measurement of the human body's dimensions (height, reach, limb lengths) and their population distribution. Designers use it to size cockpits, seats and controls so they suit a wide range of pilots — e.g. designing for the 5th to 95th percentile."},
+ {r:"46.56.8",q:"Explain what is meant by ergonomics.",a:"Ergonomics (human factors engineering) is designing systems, tools and workplaces to fit human capabilities and limits — improving safety, comfort and efficiency. In aviation it shapes the cockpit layout, controls and displays to match how pilots actually operate."},
+ {r:"46.56.10",q:"Explain what is meant by a workstation.",a:"A workstation is the area where a person performs tasks — for a pilot, the flight deck with its seat, controls, displays and switches. Good workstation design places everything within reach and view, minimises strain and supports efficient, error-resistant operation."},
+ {r:"46.56.12",q:"Explain what is meant by a control.",a:"A control is a device the pilot uses to command the aircraft or systems — levers, yokes, throttles, switches, knobs. Good controls are unambiguous (position/shape/movement indicates function), give feedback and are arranged to prevent wrong inputs."},
+ {r:"46.56.14",q:"Explain what is meant by a display.",a:"A display presents information to the pilot — instruments, screens, lights, gauges. Good displays show the right information clearly and in a logical scan order, use consistent symbols, avoid clutter, and are readable at all light levels."},
+ {r:"46.56.16",q:"Explain what is meant by an interface.",a:"An interface is the point where the pilot and the system interact — the combined set of controls (input) and displays (output). A well-designed interface makes actions intuitive, gives immediate feedback and minimises the chance of wrong inputs or misreadings."}
+]},
+{r:"46.58",t:"Workstation design",s:"Ergonomics",cards:[
+ {r:"46.58.2",q:"Explain what is meant by a workstation.",a:"A workstation is the designed area where work is performed — for a pilot, the seat, controls, displays and surrounding space of the flight deck. It should fit the user's body and task so work is efficient, comfortable and safe."},
+ {r:"46.58.4",q:"Explain what is meant by a seat.",a:"A seat is the support that positions the pilot in the workstation. A good cockpit seat is adjustable (height, depth, back) to suit different body sizes, supports correct posture and visibility, and reduces fatigue over long duties."},
+ {r:"46.58.6",q:"Explain what is meant by a control panel.",a:"A control panel is the arrangement of controls and displays within reach of the pilot. Good layout groups related functions logically, keeps critical items prominent, and uses consistent, self-describing controls to reduce errors."},
+ {r:"46.58.8",q:"Explain what is meant by a display panel.",a:"A display panel is the set of instruments/screens that present flight and system information. It should be arranged in a natural scan order (primary flight info prominent), be uncluttered, consistent and readable — so the pilot can read it accurately under stress."},
+ {r:"46.58.10",q:"Explain what is meant by an instrument panel.",a:"An instrument panel is the primary display of flight information (attitude, heading, altitude, speed, engine). Its layout follows a standard 'T' arrangement for quick scanning; consistency across aircraft reduces the chance of misreading."},
+ {r:"46.58.12",q:"Explain what is meant by a gauge.",a:"A gauge is an analogue instrument showing a value on a dial (e.g. pressure, temperature). Gauges are read by pointer position against a scale; good gauges have clear markings and ranges so values are read quickly and correctly."},
+ {r:"46.58.14",q:"Explain what is meant by an indicator.",a:"An indicator is a simple visual signal showing a condition or value — e.g. a light, flag or bar showing 'on/off', full/empty or a level. Indicators give immediate status feedback and are designed for fast, unambiguous reading."},
+ {r:"46.58.16",q:"Explain what is meant by a switch.",a:"A switch is a control that turns a function on or off (or selects between states). Good switches are clearly labelled, give tactile/visual feedback of position, and are arranged to prevent operating the wrong one."},
+ {r:"46.58.18",q:"Explain what is meant by a lever.",a:"A lever is a control moved through an arc or range (e.g. throttle, flap lever). It should have clear detents/positions, consistent movement direction, and feedback so the pilot knows exactly where it is set."},
+ {r:"46.58.20",q:"Explain what is meant by a knob.",a:"A knob is a rotary control adjusted by turning (e.g. volume, tuning). It should give clear detents or clicks and feedback of position so the setting is accurate; consistent clockwise/anticlockwise behaviour reduces selection errors."}
+]});
+DATA.push(
+{r:"46.60",t:"Lighting",s:"Ergonomics",cards:[
+ {r:"46.60.2",q:"Explain what is meant by illumination.",a:"Illumination is the amount of light falling on a surface, measured in lux — determining how well instruments and the environment can be seen. Adequate, even illumination is essential for reading displays and avoiding eye strain in the cockpit."},
+ {r:"46.60.4",q:"Explain what is meant by luminance.",a:"Luminance is the brightness of a surface or light source as perceived by the eye (cd/m²). Contrast between instrument luminance and its background affects readability; too little contrast makes displays hard to read, too much causes glare."},
+ {r:"46.60.6",q:"Explain what is meant by glare.",a:"Glare is excessive or poorly controlled brightness that reduces visibility and causes eye strain — e.g. sun on instruments, bright displays at night, or reflections. Cockpit design uses shades, positioning and dimmable displays to minimise it."},
+ {r:"46.60.8",q:"Explain what is meant by contrast.",a:"Contrast is the difference in brightness between an object (e.g. a pointer or digit) and its background. Sufficient contrast makes instruments readable quickly; low contrast (or glare) forces the eye to work harder and increases misreading risk."},
+ {r:"46.60.10",q:"Explain what is meant by colour.",a:"Colour is used in cockpits to convey meaning (e.g. red for warnings/caution, green for normal) and to aid recognition. But colour vision degrades in low light, so colour must be backed by position/shape/symbol — never relied on alone."},
+ {r:"46.60.12",q:"Explain what is meant by ambient light.",a:"Ambient light is the general surrounding light level in the environment (or cabin). Cockpit displays and lighting are designed to work across a range of ambient conditions — bright daylight to night — so instruments remain readable without dazzling the pilot."},
+ {r:"46.60.14",q:"Explain what is meant by artificial light.",a:"Artificial light is human-made illumination (instrument backlighting, cabin and flood lights). In the cockpit it must be sufficient for reading yet controllable (dimmable) so it does not cause glare or destroy night vision — dim red light is often used at night."},
+ {r:"46.60.16",q:"Explain what is meant by natural light.",a:"Natural light is daylight entering the cockpit through windows. It is useful for outside visual reference but varies greatly (and can cause glare or wash out displays); cockpit design manages it with shades and display contrast to keep instruments readable."},
+ {r:"46.60.18",q:"Explain what is meant by a light source.",a:"A light source is anything that emits visible light — the sun, instrument backlighting, cabin lights or warning lamps. In the cockpit their placement, intensity and colour are designed to illuminate instruments clearly without glare or night-vision loss."},
+ {r:"46.60.20",q:"Explain what is meant by a lux meter.",a:"A lux meter measures illumination (light level) in lux on a surface — used to verify that cockpit displays and work areas meet required lighting levels for safe, comfortable reading across different flight conditions."}
+]},
+{r:"46.62",t:"Cockpit layout",s:"Ergonomics",cards:[
+ {r:"46.62.2",q:"Explain what is meant by a cockpit.",a:"The cockpit (flight deck) is the area where the flight crew controls and monitors the aircraft — its seat, controls, displays and systems. Its layout is designed ergonomically so all critical items are within reach, sight and scan order for safe operation."},
+ {r:"46.62.4",q:"Explain what is meant by a control station.",a:"A control station is the pilot's position — seat and associated controls (yoke/lever, throttles, switches) from which they fly the aircraft. It is positioned for good visibility of instruments and outside, with all primary controls within easy reach."},
+ {r:"46.62.6",q:"Explain what is meant by a display station.",a:"A display station is the arrangement of instruments and screens the pilot reads (primary flight displays, engine gauges, warning lights). It follows a standard scan order with critical information prominent, so readings are quick and unambiguous."},
+ {r:"46.62.8",q:"Explain what is meant by a switch panel.",a:"A switch panel is the group of switches controlling electrical and other systems. Good panels group related functions logically, label clearly and give feedback of position — reducing the chance of operating the wrong switch."},
+ {r:"46.62.10",q:"Explain what is meant by a gauge cluster.",a:"A gauge cluster is a grouped set of instruments (e.g. engine gauges) arranged for efficient scanning. Logical grouping and consistent placement let the pilot read related values quickly without hunting, reducing workload."},
+ {r:"46.62.12",q:"Explain what is meant by an instrument cluster.",a:"An instrument cluster is the primary set of flight instruments (attitude, heading, altitude, speed) in a standard layout for rapid scanning. The conventional arrangement keeps critical flight data in predictable positions across aircraft."},
+ {r:"46.62.14",q:"Explain what is meant by a control yoke.",a:"A control yoke is the steering wheel/handle used to command pitch and roll. It is positioned for comfortable, precise input within easy reach of the pilot, with clear feedback of its position."},
+ {r:"46.62.16",q:"Explain what is meant by a throttle quadrant.",a:"A throttle quadrant is the control area (usually levers/knobs) for engine power and related settings. It is placed within easy reach of the pilot's hand, with clear detents and feedback so power settings are accurate."},
+ {r:"46.62.18",q:"Explain what is meant by a seat position.",a:"Seat position is where the pilot sits relative to controls and displays — adjustable so that sight lines to instruments and outside, and reach to all controls, are correct for their body size. Correct positioning supports visibility, comfort and accurate control."},
+ {r:"46.62.20",q:"Explain what is meant by a headrest.",a:"A headrest is the support at the top of the seat that positions and steadies the pilot's head/neck. Proper head support improves posture, reduces neck fatigue on long duties and helps maintain consistent sight lines to instruments."}
+]});
+
+var stage=document.getElementById('stage');
+var card=document.getElementById('card');
+var cardInner=document.getElementById('cardInner');
+var topicList=document.getElementById('topicList');
+var landing=document.getElementById('landing');
+var cardsScreen=document.getElementById('cards');
+var topicTitleEl=document.getElementById('topicTitle');
+var counterEl=document.getElementById('counter');
+var progressBar=document.getElementById('progressBar');
+
+/* ---- theme ---- */
+var theme=localStorage.getItem('atpl-theme')||'dark';
+function applyTheme(){
+  document.body.className=theme;
+  var glyph=theme==='dark'?'\u2600\uFE0F':'\uD83C\uDF19';
+  var btns=document.querySelectorAll('[aria-label="Toggle theme"]');
+  for(var i=0;i<btns.length;i++){btns[i].textContent=glyph;}
+}
+function toggleTheme(){theme=(theme==='dark')?'light':'dark';localStorage.setItem('atpl-theme',theme);applyTheme();}
+document.getElementById('themeBtn').onclick=toggleTheme;
+document.getElementById('themeBtn2').onclick=toggleTheme;
+
+/* ---- landing list ---- */
+function buildLanding(){
+  topicList.innerHTML='';
+  var lastS=null;
+  for(var i=0;i<DATA.length;i++){
+    (function(i){
+      var topic=DATA[i];
+      if(topic.s!==lastS){var h=document.createElement('div');h.className='sect';h.textContent=topic.s;topicList.appendChild(h);lastS=topic.s;}
+      var row=document.createElement('div');row.className='row';
+      row.innerHTML='<div class="badge">'+topic.r+'</div><div class="info"><div class="t">'+topic.t+'</div><div class="c">'+topic.cards.length+' cards</div></div><div class="chev">&#8250;</div>';
+      row.onclick=function(){openTopic(i);};
+      topicList.appendChild(row);
+    })(i);
+  }
+}
+
+/* ---- card rendering ---- */
+var currentTopic=0,cardIdx=0,busy=false;
+function renderCard(){
+  var cur=DATA[currentTopic];var c=cur.cards[cardIdx];
+  document.getElementById('frontRef').textContent=c.r;
+  document.getElementById('backRef').textContent=c.r;
+  document.getElementById('frontQ').textContent=c.q;
+  document.getElementById('backA').textContent=c.a;
+  topicTitleEl.textContent=cur.t;
+  counterEl.textContent=(cardIdx+1)+' / '+cur.cards.length;
+  progressBar.style.width=((cardIdx+1)/cur.cards.length*100)+'%';
+  cardInner.classList.remove('flipped');
+}
+function openTopic(i){
+  currentTopic=i;cardIdx=0;
+  landing.classList.add('hidden');cardsScreen.classList.remove('hidden');
+  renderCard();
+  busy=true;
+  card.style.transition='none';card.style.transform='translateY(28px)';card.style.opacity='0';
+  requestAnimationFrame(function(){
+    card.style.transition='transform .3s ease, opacity .3s ease';
+    card.style.transform='translateY(0)';card.style.opacity='1';
+    setTimeout(function(){busy=false;},320);
+  });
+}
+function goHome(){
+  cardsScreen.classList.add('hidden');landing.classList.remove('hidden');
+  cardInner.classList.remove('flipped');
+  card.style.transition='none';card.style.transform='translateY(0)';card.style.opacity='1';
+}
+document.getElementById('backBtn').onclick=goHome;
+
+function flip(){cardInner.classList.toggle('flipped');}
+
+/* ---- navigation with animation ---- */
+function navigate(dir){
+  if(busy)return;busy=true;
+  var exitY=(dir==='up')?'-120%':'120%';
+  var rot=(dir==='up')?-16:16;
+  card.style.transition='transform .28s ease, opacity .28s ease';
+  card.style.transform='translateY('+exitY+') rotateX('+rot+'deg)';
+  card.style.opacity='0';
+  setTimeout(function(){
+    if(dir==='up'){if(cardIdx<DATA[currentTopic].cards.length-1)cardIdx++;}
+    else{if(cardIdx>0)cardIdx--;}
+    renderCard();
+    var enterY=(dir==='up')?'120%':'-120%';
+    card.style.transition='none';
+    card.style.transform='translateY('+enterY+') rotateX('+(-rot)+'deg)';
+    card.style.opacity='0';
+    requestAnimationFrame(function(){
+      card.style.transition='transform .28s ease, opacity .28s ease';
+      card.style.transform='translateY(0) rotateX(0)';
+      card.style.opacity='1';
+      setTimeout(function(){busy=false;},60);
+    });
+  },270);
+}
+
+/* ---- swipe / tap (pointer events) ---- */
+var sx=0,sy=0,dragging=false;
+stage.addEventListener('pointerdown',function(e){
+  if(busy)return;
+  sx=e.clientX;sy=e.clientY;dragging=false;
+  if(stage.setPointerCapture){stage.setPointerCapture(e.pointerId);}
+});
+stage.addEventListener('pointermove',function(e){
+  if(busy)return;
+  var dy=e.clientY-sy;
+  if(!dragging && Math.abs(dy)>8){dragging=true;}
+  if(dragging){
+    card.style.transition='none';
+    card.style.transform='translateY('+dy+'px) rotateX('+(dy*0.04)+'deg)';
+  }
+});
+function endSwipe(e){
+  if(busy)return;
+  var dy=e.clientY-sy;
+  if(!dragging){flip();return;}
+  card.style.transition='transform .3s ease';
+  if(dy<=-70){navigate('up');}
+  else if(dy>=70){navigate('down');}
+  else{card.style.transform='translateY(0) rotateX(0)';setTimeout(function(){card.style.transition='';},300);}
+}
+stage.addEventListener('pointerup',endSwipe);
+stage.addEventListener('pointercancel',function(e){if(busy)return;card.style.transition='transform .3s ease';card.style.transform='translateY(0) rotateX(0)';});
+
+/* ---- keyboard (desktop convenience) ---- */
+window.addEventListener('keydown',function(e){
+  if(cardsScreen.classList.contains('hidden'))return;
+  if(e.key==='Escape'){goHome();}
+  else if(e.key==='ArrowUp'||e.key==='ArrowRight'||e.key===' '){e.preventDefault();navigate('up');}
+  else if(e.key==='ArrowDown'||e.key==='ArrowLeft'){e.preventDefault();navigate('down');}
+});
+
+/* ---- init ---- */
+applyTheme();
+buildLanding();
+</script>
+</body>
+</html>
